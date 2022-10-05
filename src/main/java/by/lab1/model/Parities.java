@@ -1,4 +1,4 @@
-package by.bsuir.lab1.model;
+package by.lab1.model;
 
 public enum Parities {
     PARITY_NONE,

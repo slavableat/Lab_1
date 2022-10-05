@@ -1,8 +1,8 @@
-package by.bsuir.lab1.creator;
+package by.lab1.creator;
 
-import by.bsuir.lab1.event.SerialPortReader;
-import by.bsuir.lab1.model.MySerialPort;
-import by.bsuir.lab1.model.Parities;
+import by.lab1.event.SerialPortReader;
+import by.lab1.model.CustomPort;
+import by.lab1.model.Parities;
 import javafx.scene.control.TextArea;
 import jssc.SerialPort;
 import jssc.SerialPortException;
@@ -24,9 +24,9 @@ public class SerialPortCreator {
         return port;
     }
 
-    public static void configurePorts(List<MySerialPort> ports, Parities parity) {
+    public static void configurePorts(List<CustomPort> ports, Parities parity) {
         try {
-            for (MySerialPort port : ports) {
+            for (CustomPort port : ports) {
                 port.getSerialPort().addEventListener(new SerialPortReader(port, port.getOutput()),
                         SerialPort.MASK_RXCHAR);
             }
@@ -36,8 +36,8 @@ public class SerialPortCreator {
         }
     }
 
-    public static void setPortParams(List<MySerialPort> ports, Parities parity) {
-        for (MySerialPort port : ports) {
+    public static void setPortParams(List<CustomPort> ports, Parities parity) {
+        for (CustomPort port : ports) {
             try {
                 port.getSerialPort().setParams(
                         SerialPort.BAUDRATE_9600,

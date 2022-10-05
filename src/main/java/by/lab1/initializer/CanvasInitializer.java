@@ -1,4 +1,4 @@
-package by.bsuir.lab1.initializer;
+package by.lab1.initializer;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

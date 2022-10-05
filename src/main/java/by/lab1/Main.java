@@ -1,6 +1,6 @@
-package by.bsuir.lab1;
+package by.lab1;
 
-import by.bsuir.lab1.initializer.CanvasInitializer;
+import by.lab1.initializer.CanvasInitializer;
 import javafx.stage.Stage;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package by.bsuir.lab1.event;
+package by.lab1.event;
 
 import javafx.scene.control.TextArea;
 
