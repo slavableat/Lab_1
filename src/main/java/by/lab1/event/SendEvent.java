@@ -1,7 +1,6 @@
 package by.lab1.event;
 
 import by.lab1.model.CustomPort;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
@@ -28,10 +27,14 @@ public class SendEvent {
         try {
             if (isPortAvailable()) {
                 byte[] message = (input.getText()).getBytes(StandardCharsets.UTF_8);
-                byte[] finalMessage = Arrays.copyOf(message, message.length-1);
-                port.getSerialPort().writeBytes(finalMessage);
-                debug.appendText(finalMessage.length + " bytes sent" + CARRY_OVER);
-                input.clear();
+                if (message.length != 0) {
+                    if (message[message.length-1] == 10){ message = Arrays.copyOf(message, message.length - 1);}
+
+                    port.getSerialPort().writeBytes(message);
+
+                    input.clear();
+                }
+                debug.appendText(message.length + " bytes sent" + CARRY_OVER);
             } else {
                 debug.appendText("Unable to send data to port!" + CARRY_OVER);
             }
