@@ -28,7 +28,9 @@ public class SendEvent {
             if (isPortAvailable()) {
                 byte[] message = (input.getText()).getBytes(StandardCharsets.UTF_8);
                 if (message.length != 0) {
-                    if (message[message.length-1] == 10){ message = Arrays.copyOf(message, message.length - 1);}
+                    if (message[message.length - 1] == 10) {
+                        message = Arrays.copyOf(message, message.length - 1);
+                    }
 
                     port.getSerialPort().writeBytes(message);
 

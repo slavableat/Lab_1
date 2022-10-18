@@ -10,13 +10,7 @@ import jssc.SerialPortException;
 import java.util.List;
 
 public class SerialPortCreator {
-    private TextArea output;
-    private TextArea debug;
-
-    public SerialPortCreator(TextArea textView, TextArea debug) {
-        this.output = textView;
-        this.debug = debug;
-    }
+    private static TextArea logger;
 
     public static SerialPort createSerialPort(String portName) throws SerialPortException {
         SerialPort port = new SerialPort(portName);
@@ -27,7 +21,7 @@ public class SerialPortCreator {
     public static void configurePorts(List<CustomPort> ports, Parities parity) {
         try {
             for (CustomPort port : ports) {
-                port.getSerialPort().addEventListener(new SerialPortReader(port, port.getOutput()),
+                port.getSerialPort().addEventListener(new SerialPortReader(port, port.getOutput(),logger),
                         SerialPort.MASK_RXCHAR);
             }
             setPortParams(ports, parity);
@@ -49,5 +43,9 @@ public class SerialPortCreator {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void setLogger(TextArea logger) {
+        SerialPortCreator.logger = logger;
     }
 }
