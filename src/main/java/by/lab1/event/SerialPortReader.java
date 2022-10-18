@@ -1,6 +1,6 @@
 package by.lab1.event;
 
-import by.lab1.model.CustomPort;
+import by.lab1.model.PortAndHisTextArea;
 import javafx.scene.control.TextArea;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
@@ -9,12 +9,12 @@ import jssc.SerialPortException;
 import java.nio.charset.StandardCharsets;
 
 public class SerialPortReader implements SerialPortEventListener {
-    private CustomPort port;
-    private TextArea output;
-    private TextArea logger;
+    private final PortAndHisTextArea port;
+    private final TextArea output;
+    private final TextArea logger;
     private static final String CARRY_OVER = "\n";
 
-    public SerialPortReader(CustomPort port, TextArea output, TextArea logger) {
+    public SerialPortReader(PortAndHisTextArea port, TextArea output, TextArea logger) {
         this.port = port;
         this.output = output;
         this.logger = logger;

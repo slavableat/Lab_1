@@ -4,13 +4,13 @@ import jssc.SerialPort;
 import javafx.scene.control.TextArea;
 
 
-public class CustomPort {
-    private SerialPort serialPort;
-    private TextArea output;
+public class PortAndHisTextArea {
+    private final SerialPort serialPort;
+    private final TextArea area;
 
-    public CustomPort(SerialPort serialPort, TextArea output) {
+    public PortAndHisTextArea(SerialPort serialPort, TextArea area) {
         this.serialPort = serialPort;
-        this.output = output;
+        this.area = area;
     }
 
     public SerialPort getSerialPort() {
@@ -19,7 +19,7 @@ public class CustomPort {
     public String getPortName(){
         return serialPort.getPortName();
     }
-    public TextArea getOutput() {
-        return output;
+    public TextArea getArea() {
+        return area;
     }
 }

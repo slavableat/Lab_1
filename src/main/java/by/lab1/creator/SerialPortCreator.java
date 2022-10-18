@@ -1,7 +1,7 @@
 package by.lab1.creator;
 
 import by.lab1.event.SerialPortReader;
-import by.lab1.model.CustomPort;
+import by.lab1.model.PortAndHisTextArea;
 import by.lab1.model.Parities;
 import javafx.scene.control.TextArea;
 import jssc.SerialPort;
@@ -18,20 +18,17 @@ public class SerialPortCreator {
         return port;
     }
 
-    public static void configurePorts(List<CustomPort> ports, Parities parity) {
+    public static void setEventListenerForReceiver(PortAndHisTextArea receiver) {
         try {
-            for (CustomPort port : ports) {
-                port.getSerialPort().addEventListener(new SerialPortReader(port, port.getOutput(),logger),
-                        SerialPort.MASK_RXCHAR);
-            }
-            setPortParams(ports, parity);
+            receiver.getSerialPort().addEventListener(new SerialPortReader(receiver, receiver.getArea(), logger),
+                    SerialPort.MASK_RXCHAR);
         } catch (SerialPortException e) {
             e.printStackTrace();
         }
     }
 
-    public static void setPortParams(List<CustomPort> ports, Parities parity) {
-        for (CustomPort port : ports) {
+    public static void setPortParams(List<PortAndHisTextArea> ports, Parities parity) {
+        for (PortAndHisTextArea port : ports) {
             try {
                 port.getSerialPort().setParams(
                         SerialPort.BAUDRATE_9600,

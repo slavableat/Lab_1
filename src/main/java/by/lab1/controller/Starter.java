@@ -3,7 +3,7 @@ package by.lab1.controller;
 
 import by.lab1.creator.SerialPortCreator;
 import by.lab1.event.SendEvent;
-import by.lab1.model.CustomPort;
+import by.lab1.model.PortAndHisTextArea;
 import by.lab1.model.Parities;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -14,8 +14,8 @@ import jssc.SerialPortException;
 import java.util.Arrays;
 
 public class Starter {
-    private CustomPort port;
-    private CustomPort port1;
+    private PortAndHisTextArea writer;
+    private PortAndHisTextArea receiver;
 
     @FXML
     private TextArea input;
@@ -37,30 +37,28 @@ public class Starter {
                 parity.getItems().add(String.valueOf(var));
             parity.setValue("PARITY_NONE");
             try {
-                port = new CustomPort(SerialPortCreator.createSerialPort("COM1"), input);
+                writer = new PortAndHisTextArea(SerialPortCreator.createSerialPort("COM1"), input);
                 logger.appendText("COM1 initialized for writing ...\n");
-                port1 = new CustomPort(SerialPortCreator.createSerialPort("COM2"), output);
+                receiver = new PortAndHisTextArea(SerialPortCreator.createSerialPort("COM2"), output);
                 logger.appendText("COM2 initialized for reading...\n");
             } catch (SerialPortException spe) {
-                port = new CustomPort(SerialPortCreator.createSerialPort("COM3"), input);
+                writer = new PortAndHisTextArea(SerialPortCreator.createSerialPort("COM3"), input);
                 logger.appendText("COM3 initialized for writing ...\n");
-                port1 = new CustomPort(SerialPortCreator.createSerialPort("COM4"), output);
+                receiver = new PortAndHisTextArea(SerialPortCreator.createSerialPort("COM4"), output);
                 logger.appendText("COM4 initialized for reading...\n");
             }
             SerialPortCreator.setLogger(logger);
 
-            SerialPortCreator.configurePorts(
-                    Arrays.asList(port, port1),
-                    Parities.valueOf(parity.getValue()));
-
+            SerialPortCreator.setEventListenerForReceiver(receiver);
+            SerialPortCreator.setPortParams(Arrays.asList(writer, receiver), Parities.valueOf(parity.getValue()));
 
             input.setOnKeyPressed(keyEvent -> {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
-                    new SendEvent(input, logger, port).mouseClickedEvent();
+                    new SendEvent(input, logger, writer).mouseClickedEvent();
                 }
             });
 
-            parity.setOnAction(actionEvent -> SerialPortCreator.setPortParams(Arrays.asList(port, port1), Parities.valueOf(parity.getValue())));
+            parity.setOnAction(actionEvent -> SerialPortCreator.setPortParams(Arrays.asList(writer, receiver), Parities.valueOf(parity.getValue())));
 
         } catch (SerialPortException e) {
             logger.appendText("Port initialization error!\n");
