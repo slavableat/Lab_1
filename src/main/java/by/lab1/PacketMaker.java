@@ -1,7 +1,7 @@
 package by.lab1;
 
 public class PacketMaker {
-    private final static String FLAG = "01100010";
+    public final static String FLAG = "01100010";
     private final static String DESTINATION_ADRESS = "0000";
     private final static String SOURCE_ADDRESS = "0000";
 
@@ -13,7 +13,7 @@ public class PacketMaker {
         packetMaker.append(FLAG);
         packetMaker.append(DESTINATION_ADRESS);
         packetMaker.append(SOURCE_ADDRESS);
-        var lengthOfData = Integer.toBinaryString(data.length());
+        var lengthOfData = Integer.toBinaryString(data.length()-1);
         while (lengthOfData.length() < 4) {
             lengthOfData = "0".concat(lengthOfData);
         }

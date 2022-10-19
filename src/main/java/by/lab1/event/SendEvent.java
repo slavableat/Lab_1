@@ -36,7 +36,15 @@ public class SendEvent {
                     }
                     String temp = new String(message, StandardCharsets.UTF_8);
 
-                    port.getSerialPort().writeBytes(PacketMaker.makePacket(temp).getBytes(StandardCharsets.UTF_8));
+                    while (temp.length() / 16 != 0) {
+                        var packet = PacketMaker.makePacket(temp.substring(0, 16));
+                        temp = temp.substring(16);
+                        port.getSerialPort().writeBytes(packet.getBytes(StandardCharsets.UTF_8));
+
+                    }
+                    if (!temp.isEmpty()) {
+                        port.getSerialPort().writeBytes(PacketMaker.makePacket(temp).getBytes(StandardCharsets.UTF_8));
+                    }
                     input.clear();
                 }
             } else {
