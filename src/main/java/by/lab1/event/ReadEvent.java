@@ -28,8 +28,8 @@ public class ReadEvent implements SerialPortEventListener {
             try {
                 byte[] dataByteFormat = port.getSerialPort().readBytes(serialPortEvent.getEventValue());
                 String outputData = new String(dataByteFormat, StandardCharsets.UTF_8);
+                logger.appendText(outputData + CARRY_OVER);
                 outputData = PacketMaker.getDataFromPacket(outputData);
-                logger.appendText(outputData.length() + " bytes received" + CARRY_OVER);
                 output.appendText(outputData + CARRY_OVER);
             } catch (SerialPortException e) {
                 e.printStackTrace();

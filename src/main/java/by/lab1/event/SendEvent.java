@@ -34,8 +34,9 @@ public class SendEvent {
                     if (message[message.length - 1] == 10) {
                         message = Arrays.copyOf(message, message.length - 1);
                     }
-                     PacketMaker.makePacket(new String(message, StandardCharsets.UTF_8));
-                    port.getSerialPort().writeBytes(message);
+                    String temp = new String(message, StandardCharsets.UTF_8);
+
+                    port.getSerialPort().writeBytes(PacketMaker.makePacket(temp).getBytes(StandardCharsets.UTF_8));
                     input.clear();
                 }
             } else {

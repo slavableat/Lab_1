@@ -11,8 +11,8 @@ public class BitStuffer {
             flag = flag.substring(1);
         }
         lastSymbol = flag.charAt(flag.length() - 1);
-        if (lastSymbol == '1') reverseLastSymbol = 'O';
-        else reverseLastSymbol = '|';
+        if (lastSymbol == '1') reverseLastSymbol = '0';
+        else reverseLastSymbol = '1';
     }
 
     public  String bitStaff(String data) {
