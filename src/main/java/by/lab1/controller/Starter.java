@@ -8,6 +8,7 @@ import by.lab1.model.Parities;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyCode;
 import jssc.SerialPortException;
 
@@ -51,7 +52,13 @@ public class Starter {
 
             SerialPortCreator.setEventListenerForReceiver(receiver);
             SerialPortCreator.setPortParams(Arrays.asList(writer, receiver), Parities.valueOf(parity.getValue()));
-
+            input.setTextFormatter(new TextFormatter<Integer>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("[01\\n]*")) {// [01\\n]*
+                    return change;
+                }
+                return null;
+            }));
             input.setOnKeyPressed(keyEvent -> {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
                     new SendEvent(input, logger, writer).mouseClickedEvent();
