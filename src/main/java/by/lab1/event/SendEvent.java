@@ -1,5 +1,7 @@
 package by.lab1.event;
 
+import by.lab1.BitStuffer;
+import by.lab1.PacketMaker;
 import by.lab1.model.PortAndHisTextArea;
 import javafx.scene.control.TextArea;
 import jssc.SerialPortException;
@@ -11,6 +13,7 @@ import java.util.Arrays;
 public class SendEvent {
     private final TextArea input;
     private final TextArea debug;
+//    private final PacketMaker packetMaker = new PacketMaker();
 
     public SendEvent(TextArea input, TextArea debug, PortAndHisTextArea port) {
         this.input = input;
@@ -31,6 +34,7 @@ public class SendEvent {
                     if (message[message.length - 1] == 10) {
                         message = Arrays.copyOf(message, message.length - 1);
                     }
+                     PacketMaker.makePacket(new String(message, StandardCharsets.UTF_8));
                     port.getSerialPort().writeBytes(message);
                     input.clear();
                 }

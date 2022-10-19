@@ -1,11 +1,21 @@
 package by.lab1;
 
 public class BitStuffer {
-    private  static String flag = "01100010";
-    private static char lastSymbol;
-    private static char reverseLastSymbol;
+    private String flag;
+    private char lastSymbol;
+    private char reverseLastSymbol;
 
-    public  static String bitStaff(String data) {
+    public BitStuffer(String flag) {
+        this.flag = flag;
+        while (flag.startsWith("0")) {
+            flag = flag.substring(1);
+        }
+        lastSymbol = flag.charAt(flag.length() - 1);
+        if (lastSymbol == '1') reverseLastSymbol = 'O';
+        else reverseLastSymbol = '|';
+    }
+
+    public  String bitStaff(String data) {
 //        var finalData = new StringBuilder();
 //        int count = 0;
 //        var finalData = new StringBuilder();
@@ -38,17 +48,12 @@ public class BitStuffer {
         return str;
     }
 
-    public  static String debitStaff(String data) {
-        return data.replaceAll(flag.substring(0, flag.length() - 1) + reverseLastSymbol + lastSymbol,flag);
+    public  String debitStaff(String data) {
+        return data.replaceAll(flag.substring(0, flag.length() - 1) + reverseLastSymbol + lastSymbol, flag);
     }
 
-    public static void main(String[] args) {
-        while (flag.startsWith("0")) {
-            flag = flag.substring(1);
-        }
-        lastSymbol = flag.charAt(flag.length() - 1);
-        if (lastSymbol == '1') reverseLastSymbol = '0';
-        else reverseLastSymbol = '1';
-        System.out.println(debitStaff(bitStaff("11000101111100010")));
-    }
+//    public static void main(String[] args) {
+//
+//        System.out.println(debitStaff(bitStaff("11000101111100010110001011111000101100010111110001011000101111100010")));
+//    }
 }

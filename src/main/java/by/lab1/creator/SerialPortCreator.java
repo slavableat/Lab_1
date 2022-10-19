@@ -1,6 +1,6 @@
 package by.lab1.creator;
 
-import by.lab1.event.SerialPortReader;
+import by.lab1.event.ReadEvent;
 import by.lab1.model.PortAndHisTextArea;
 import by.lab1.model.Parities;
 import javafx.scene.control.TextArea;
@@ -20,7 +20,7 @@ public class SerialPortCreator {
 
     public static void setEventListenerForReceiver(PortAndHisTextArea receiver) {
         try {
-            receiver.getSerialPort().addEventListener(new SerialPortReader(receiver, receiver.getArea(), logger),
+            receiver.getSerialPort().addEventListener(new ReadEvent(receiver, receiver.getArea(), logger),
                     SerialPort.MASK_RXCHAR);
         } catch (SerialPortException e) {
             e.printStackTrace();
