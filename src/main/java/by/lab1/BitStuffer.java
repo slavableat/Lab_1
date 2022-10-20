@@ -6,6 +6,10 @@ public class BitStuffer {
 
     public BitStuffer(String flag8bit) {
         this.flag = flag8bit;
+        makeRightFromatOfFlagAndCheckLastSymbom();
+    }
+
+    private void makeRightFromatOfFlagAndCheckLastSymbom(){
         while (this.flag.startsWith("0")) {
             this.flag = this.flag.substring(1);
         }
