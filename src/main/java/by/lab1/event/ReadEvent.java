@@ -1,6 +1,5 @@
 package by.lab1.event;
 
-import by.lab1.BitStuffer;
 import by.lab1.PacketMaker;
 import by.lab1.model.PortAndHisTextArea;
 import javafx.scene.control.TextArea;
@@ -29,9 +28,8 @@ public class ReadEvent implements SerialPortEventListener {
             try {
                 byte[] dataByteFormat = port.getSerialPort().readBytes(serialPortEvent.getEventValue());
                 String outputData = new String(dataByteFormat, StandardCharsets.UTF_8);
-//                if(outputData.substring(9).indexOf(PacketMaker.FLAG) != -1){
-//                    dataFromLastPart = outputData.substring(outputData.substring(9).indexOf(PacketMaker.FLAG));
-//                }
+
+
                 //todo вынести в метод
                 var flag = PacketMaker.FLAG;
                 while (flag.startsWith("0")) {
@@ -39,7 +37,9 @@ public class ReadEvent implements SerialPortEventListener {
                 }
                 var lastSymbol = flag.charAt(flag.length() - 1);
                 char reverseLastSymbol;
+                //ToDo IDEA say that this condition is always false
                 if (lastSymbol == '1') reverseLastSymbol = '0';
+
                 else reverseLastSymbol = '1';
                 var flagIntoPacketAfterBitStuffing = flag.substring(0, flag.length() - 1) + (reverseLastSymbol);
                 var markedFlagIntoPacketAfterBitStuffing = flag.substring(0, flag.length() - 1) + "[" + reverseLastSymbol + "]";
@@ -65,12 +65,9 @@ public class ReadEvent implements SerialPortEventListener {
                     outputData = PacketMaker.getDataFromPacket(outputData);
                     output.appendText(outputData + CARRY_OVER);
                 }
-//1100010110001000
-
             } catch (SerialPortException e) {
                 e.printStackTrace();
             }
         }
     }
 }
-//11000111000100

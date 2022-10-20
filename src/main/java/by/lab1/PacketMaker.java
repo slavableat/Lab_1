@@ -7,7 +7,6 @@ public class PacketMaker {
 
     private final static String FCS = "0";
 
-    //Todo сделать разделение ифнормации на пакеты по 16 символов если ифны больше чем 16 символов, узнать нужно ли битстафить длину
     public static String makePacket(String data) {
         StringBuilder packetMaker = new StringBuilder();
         packetMaker.append(FLAG);
@@ -28,6 +27,6 @@ public class PacketMaker {
         String bitStuffedData = packet.substring(FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length());
         var bitstuffer = new BitStuffer(FLAG);
         var debitStuffedData = bitstuffer.debitStaff(bitStuffedData);
-        return debitStuffedData.substring(4, debitStuffedData.length() - 1); //4- length
+        return debitStuffedData.substring(4, debitStuffedData.length() - 1); //4- count of data length bit (0-15)
     }
 }

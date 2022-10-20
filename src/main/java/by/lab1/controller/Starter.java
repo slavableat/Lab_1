@@ -52,13 +52,15 @@ public class Starter {
 
             SerialPortCreator.setEventListenerForReceiver(receiver);
             SerialPortCreator.setPortParams(Arrays.asList(writer, receiver), Parities.valueOf(parity.getValue()));
+            //may only 0,1 and Enter
             input.setTextFormatter(new TextFormatter<Integer>(change -> {
                 String newText = change.getControlNewText();
-                if (newText.matches("[01\\n]*")) {// [01\\n]*
+                if (newText.matches("[01\\n]*")) {
                     return change;
                 }
                 return null;
             }));
+
             input.setOnKeyPressed(keyEvent -> {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
                     new SendEvent(input, logger, writer).mouseClickedEvent();
