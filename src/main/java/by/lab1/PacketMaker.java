@@ -12,7 +12,8 @@ public class PacketMaker {
         packetMaker.append(FLAG);
         packetMaker.append(DESTINATION_ADRESS);
         packetMaker.append(SOURCE_ADDRESS);
-        var lengthOfData = Integer.toBinaryString(data.length()-1);
+        //todo make max value
+        var lengthOfData = Integer.toBinaryString(data.length());
         while (lengthOfData.length() < 4) {
             lengthOfData = "0".concat(lengthOfData);
         }

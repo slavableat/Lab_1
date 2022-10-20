@@ -1,6 +1,5 @@
 package by.lab1.event;
 
-import by.lab1.BitStuffer;
 import by.lab1.PacketMaker;
 import by.lab1.model.PortAndHisTextArea;
 import javafx.scene.control.TextArea;
@@ -34,13 +33,13 @@ public class SendEvent {
                     if (message[message.length - 1] == 10) {
                         message = Arrays.copyOf(message, message.length - 1);
                     }
+
                     String temp = new String(message, StandardCharsets.UTF_8);
 
-                    while (temp.length() / 16 != 0) {
-                        var packet = PacketMaker.makePacket(temp.substring(0, 16));
-                        temp = temp.substring(16);
+                    while (temp.length() / 15 != 0) {
+                        var packet = PacketMaker.makePacket(temp.substring(0, 15));
+                        temp = temp.substring(15);
                         port.getSerialPort().writeBytes(packet.getBytes(StandardCharsets.UTF_8));
-
                     }
                     if (!temp.isEmpty()) {
                         port.getSerialPort().writeBytes(PacketMaker.makePacket(temp).getBytes(StandardCharsets.UTF_8));
