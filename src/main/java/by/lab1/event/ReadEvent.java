@@ -32,9 +32,9 @@ public class ReadEvent implements SerialPortEventListener {
 
                 //todo вынести в метод
                 var flag = PacketMaker.FLAG;
-                while (flag.startsWith("0")) {
-                    flag = flag.substring(1);
-                }
+//                while (flag.startsWith("0")) {
+//                    flag = flag.substring(1);
+//                }
                 var lastSymbol = flag.charAt(flag.length() - 1);
                 char reverseLastSymbol;
                 //ToDo IDEA say that this condition is always false
@@ -43,28 +43,33 @@ public class ReadEvent implements SerialPortEventListener {
                 else reverseLastSymbol = '1';
                 var flagIntoPacketAfterBitStuffing = flag.substring(0, flag.length() - 1) + (reverseLastSymbol);
                 var markedFlagIntoPacketAfterBitStuffing = flag.substring(0, flag.length() - 1) + "[" + reverseLastSymbol + "]";
-
+                StringBuilder dataToOutput =  new StringBuilder();
 
                 if (outputData.lastIndexOf(PacketMaker.FLAG) != 0) {
+
                     while (!outputData.isEmpty()) {
                         if (outputData.lastIndexOf(PacketMaker.FLAG) != 0) {
                             var firstPAcket = outputData.substring(0, outputData.substring(8).indexOf(PacketMaker.FLAG) + PacketMaker.FLAG.length());
                             logger.appendText(firstPAcket.replaceAll(flagIntoPacketAfterBitStuffing,markedFlagIntoPacketAfterBitStuffing ) + CARRY_OVER);
                             var outputData1 = PacketMaker.getDataFromPacket(firstPAcket);
-                            output.appendText(outputData1 + CARRY_OVER);
+//                            output.appendText(outputData1 + CARRY_OVER);
+                            dataToOutput.append(outputData1);
                             outputData = outputData.substring(firstPAcket.length());
                         } else {
                             logger.appendText(outputData.replaceAll(flagIntoPacketAfterBitStuffing,markedFlagIntoPacketAfterBitStuffing ) + CARRY_OVER);
                             outputData = PacketMaker.getDataFromPacket(outputData);
-                            output.appendText(outputData + CARRY_OVER);
+//                            output.appendText(outputData + CARRY_OVER);
+                            dataToOutput.append(outputData);
                             break;
                         }
                     }
                 } else {
                     logger.appendText(outputData.replaceAll(flagIntoPacketAfterBitStuffing,markedFlagIntoPacketAfterBitStuffing ) + CARRY_OVER);
                     outputData = PacketMaker.getDataFromPacket(outputData);
-                    output.appendText(outputData + CARRY_OVER);
+//                    output.appendText(outputData + CARRY_OVER);
+                    dataToOutput.append(outputData);
                 }
+                output.appendText(dataToOutput + CARRY_OVER);
             } catch (SerialPortException e) {
                 e.printStackTrace();
             }

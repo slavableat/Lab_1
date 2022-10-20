@@ -10,15 +10,14 @@ public class BitStuffer {
     }
 
     private void makeRightFromatOfFlagAndCheckLastSymbom(){
-        while (this.flag.startsWith("0")) {
-            this.flag = this.flag.substring(1);
-        }
+//        while (this.flag.startsWith("0")) {
+//            this.flag = this.flag.substring(1);
+//        }
         var lastSymbol = this.flag.charAt(this.flag.length() - 1);
         if (lastSymbol == '1') reverseLastSymbol = '0';
         else reverseLastSymbol = '1';
     }
 
-    //todo лаг искать не полностью а без последнего и в любом случае вставлять 1 в конце а на стороне приема все единциы просто выпилить
     public String bitStaff(String data) {
         String str = data.replaceAll(flag.substring(0, flag.length() - 1), flag.substring(0, flag.length() - 1) + reverseLastSymbol);
 //        System.out.println(data);

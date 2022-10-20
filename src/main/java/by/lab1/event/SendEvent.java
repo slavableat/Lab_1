@@ -36,7 +36,7 @@ public class SendEvent {
 
                     String temp = new String(message, StandardCharsets.UTF_8);
                     if (temp.length() / 15 >= 1) {
-                        sendMoreThatOnePacket(temp);
+                        port.getSerialPort().writeBytes(makePackets(temp).getBytes(StandardCharsets.UTF_8));
                     } else {
                         port.getSerialPort().writeBytes(PacketMaker.makePacket(temp).getBytes(StandardCharsets.UTF_8));
                     }
@@ -56,14 +56,18 @@ public class SendEvent {
         return Arrays.asList(portNames).contains(port.getPortName());
     }
 
-    private void sendMoreThatOnePacket(String temp) throws SerialPortException {
+    private String makePackets(String temp) throws SerialPortException {
+        StringBuilder packets = new StringBuilder();
         while (temp.length() / 15 != 0) {
             var packet = PacketMaker.makePacket(temp.substring(0, 15));
             temp = temp.substring(15);
-            port.getSerialPort().writeBytes(packet.getBytes(StandardCharsets.UTF_8));
+//            port.getSerialPort().writeBytes(packet.getBytes(StandardCharsets.UTF_8));
+            packets.append(packet);
         }
         if (!temp.isEmpty()) {
-            port.getSerialPort().writeBytes(PacketMaker.makePacket(temp).getBytes(StandardCharsets.UTF_8));
+//            port.getSerialPort().writeBytes(PacketMaker.makePacket(temp).getBytes(StandardCharsets.UTF_8));
+            packets.append(PacketMaker.makePacket(temp));
         }
+        return packets.toString();
     }
 }
