@@ -35,7 +35,7 @@ public class SendEvent {
                     }
 
                     String temp = new String(message, StandardCharsets.UTF_8);
-                    if (temp.length() / 15 > 1) {
+                    if (temp.length() / 15 >= 1) {
                         sendMoreThatOnePacket(temp);
                     } else {
                         port.getSerialPort().writeBytes(PacketMaker.makePacket(temp).getBytes(StandardCharsets.UTF_8));
