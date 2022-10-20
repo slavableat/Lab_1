@@ -5,16 +5,16 @@ public class BitStuffer {
     private char lastSymbol;
     private char reverseLastSymbol;
 
-    public BitStuffer(String flag) {
-        this.flag = flag;
-        while (flag.startsWith("0")) {
-            flag = flag.substring(1);
+    public BitStuffer(String flag8bit) {
+        this.flag = flag8bit;
+        while (this.flag.startsWith("0")) {
+            this.flag = this.flag.substring(1);
         }
-        lastSymbol = flag.charAt(flag.length() - 1);
+        lastSymbol = this.flag.charAt(this.flag.length() - 1);
         if (lastSymbol == '1') reverseLastSymbol = '0';
         else reverseLastSymbol = '1';
     }
-
+//todo лаг искать не полностью а без последнего и в любом случае вставлять 1 в конце а на стороне приема все единциы просто выпилить
     public  String bitStaff(String data) {
 //        var finalData = new StringBuilder();
 //        int count = 0;

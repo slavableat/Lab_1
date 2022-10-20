@@ -25,7 +25,7 @@ public class PacketMaker {
     }
 
     public static String getDataFromPacket(String packet) {
-        String bitStuffedData = packet.substring(FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length(), packet.length());
+        String bitStuffedData = packet.substring(FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length());
         var bitstuffer = new BitStuffer(FLAG);
         var debitStuffedData = bitstuffer.debitStaff(bitStuffedData);
         return debitStuffedData.substring(4, debitStuffedData.length() - 1); //4- length
