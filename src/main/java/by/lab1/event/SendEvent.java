@@ -35,15 +35,12 @@ public class SendEvent {
                     }
 
                     String temp = new String(message, StandardCharsets.UTF_8);
-
-                    while (temp.length() / 15 != 0) {
-                        var packet = PacketMaker.makePacket(temp.substring(0, 15));
-                        temp = temp.substring(15);
-                        port.getSerialPort().writeBytes(packet.getBytes(StandardCharsets.UTF_8));
-                    }
-                    if (!temp.isEmpty()) {
+                    if (temp.length() / 15 > 1) {
+                        sendMoreThatOnePacket(temp);
+                    } else {
                         port.getSerialPort().writeBytes(PacketMaker.makePacket(temp).getBytes(StandardCharsets.UTF_8));
                     }
+
                     input.clear();
                 }
             } else {
@@ -57,5 +54,16 @@ public class SendEvent {
     private boolean isPortAvailable() {
         String[] portNames = SerialPortList.getPortNames();
         return Arrays.asList(portNames).contains(port.getPortName());
+    }
+
+    private void sendMoreThatOnePacket(String temp) throws SerialPortException {
+        while (temp.length() / 15 != 0) {
+            var packet = PacketMaker.makePacket(temp.substring(0, 15));
+            temp = temp.substring(15);
+            port.getSerialPort().writeBytes(packet.getBytes(StandardCharsets.UTF_8));
+        }
+        if (!temp.isEmpty()) {
+            port.getSerialPort().writeBytes(PacketMaker.makePacket(temp).getBytes(StandardCharsets.UTF_8));
+        }
     }
 }
