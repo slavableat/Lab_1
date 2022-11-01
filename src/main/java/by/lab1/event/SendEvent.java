@@ -1,6 +1,6 @@
 package by.lab1.event;
 
-import by.lab1.PacketMaker;
+import by.lab1.service.PacketMaker;
 import by.lab1.model.PortAndHisTextArea;
 import javafx.scene.control.TextArea;
 import jssc.SerialPortException;
@@ -28,27 +28,26 @@ public class SendEvent {
     public void mouseClickedEvent() {
         try {
             if (isPortAvailable()) {
-                byte[] message = (input.getText()).getBytes(StandardCharsets.UTF_8);
-                if (message.length != 0) {
-                    if (message[message.length - 1] == 10) {
-                        message = Arrays.copyOf(message, message.length - 1);
-                    }
-
-                    String temp = new String(message, StandardCharsets.UTF_8);
-                    if (temp.length() / 15 >= 1) {
-                        port.getSerialPort().writeBytes(makePackets(temp).getBytes(StandardCharsets.UTF_8));
+                String text = input.getText();
+                if (text.length() > 1) {
+                    text = text.substring(0, text.length() - 1);
+                    if (text.length() / 15 >= 1) {
+                        sendTextToPort(makePackets(text));
                     } else {
-                        port.getSerialPort().writeBytes(PacketMaker.makePacket(temp).getBytes(StandardCharsets.UTF_8));
+                        sendTextToPort(PacketMaker.makePacket(text));
                     }
-
-                    input.clear();
                 }
+                input.clear();
             } else {
                 debug.appendText("Unable to send data to port!" + CARRY_OVER);
             }
         } catch (SerialPortException e) {
             e.printStackTrace();
         }
+    }
+
+    private void sendTextToPort(String text) throws SerialPortException {
+        port.getSerialPort().writeBytes(text.getBytes(StandardCharsets.UTF_8));
     }
 
     private boolean isPortAvailable() {

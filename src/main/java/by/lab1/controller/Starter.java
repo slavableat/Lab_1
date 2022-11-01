@@ -74,7 +74,7 @@ public class Starter {
             setDisable();
         }
     }
-
+    //0110001001100010
     public void setDisable() {
         parity.setDisable(true);
         output.setDisable(true);

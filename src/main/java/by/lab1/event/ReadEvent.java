@@ -1,6 +1,6 @@
 package by.lab1.event;
 
-import by.lab1.PacketMaker;
+import by.lab1.service.PacketMaker;
 import by.lab1.model.PortAndHisTextArea;
 import javafx.scene.control.TextArea;
 import jssc.SerialPortEvent;
@@ -32,9 +32,6 @@ public class ReadEvent implements SerialPortEventListener {
 
                 //todo вынести в метод
                 var flag = PacketMaker.FLAG;
-//                while (flag.startsWith("0")) {
-//                    flag = flag.substring(1);
-//                }
                 var lastSymbol = flag.charAt(flag.length() - 1);
                 char reverseLastSymbol;
                 //ToDo IDEA say that this condition is always false
@@ -52,13 +49,11 @@ public class ReadEvent implements SerialPortEventListener {
                             var firstPAcket = outputData.substring(0, outputData.substring(8).indexOf(PacketMaker.FLAG) + PacketMaker.FLAG.length());
                             logger.appendText(firstPAcket.replaceAll(flagIntoPacketAfterBitStuffing,markedFlagIntoPacketAfterBitStuffing ) + CARRY_OVER);
                             var outputData1 = PacketMaker.getDataFromPacket(firstPAcket);
-//                            output.appendText(outputData1 + CARRY_OVER);
                             dataToOutput.append(outputData1);
                             outputData = outputData.substring(firstPAcket.length());
                         } else {
                             logger.appendText(outputData.replaceAll(flagIntoPacketAfterBitStuffing,markedFlagIntoPacketAfterBitStuffing ) + CARRY_OVER);
                             outputData = PacketMaker.getDataFromPacket(outputData);
-//                            output.appendText(outputData + CARRY_OVER);
                             dataToOutput.append(outputData);
                             break;
                         }
@@ -66,7 +61,6 @@ public class ReadEvent implements SerialPortEventListener {
                 } else {
                     logger.appendText(outputData.replaceAll(flagIntoPacketAfterBitStuffing,markedFlagIntoPacketAfterBitStuffing ) + CARRY_OVER);
                     outputData = PacketMaker.getDataFromPacket(outputData);
-//                    output.appendText(outputData + CARRY_OVER);
                     dataToOutput.append(outputData);
                 }
                 output.appendText(dataToOutput + CARRY_OVER);
