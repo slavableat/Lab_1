@@ -1,9 +1,15 @@
 package by.lab1.service;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
+
 import static java.lang.Math.pow;
 
 public class HammingService {
+
+    public static final int LENGTH_END_INDEX = 3;
+
     //made by KALYAN
     static String setHammingCodeWithParityBit(String data) {
         int lengthOfData = data.length();
@@ -82,52 +88,70 @@ public class HammingService {
         return newSet.toArray().length;
     }
 
-    public static void main(String[] args) {
+    public static String generateRandomError(String cadre) {
+        char[] result = cadre.toCharArray();
+        int randomNumber = (int) (Math.random() * 9);
 
+        if (randomNumber % 5 == 0) {
+            int errorIndex1 = (int) (Math.random() * cadre.length() - 1);
+            result[errorIndex1] = result[errorIndex1] == '1' ? '0' : '1';
+            int errorIndex2 = errorIndex1;
+            while (errorIndex2 == errorIndex1) {
+                errorIndex2 = (int) (Math.random() * cadre.length() - 1);
+            }
+            result[errorIndex2] = result[errorIndex2] == '1' ? '0' : '1';
+        } else {
+            if (randomNumber % 2 == 0) {
+                int errorIndex = (int) (Math.random() * cadre.length() - 1);
+                result[errorIndex] = result[errorIndex] == '1' ? '0' : '1';
+            }
+        }
+        return String.valueOf(result);
+    }
+
+    public static int getErrorCounts(String lengthDataFCS) {
+        Integer len = Integer.valueOf(lengthDataFCS.substring(0, LENGTH_END_INDEX), 2);
+        String hamminCodeOfReceivedData = setHammingCodeWithParityBit(lengthDataFCS.substring(LENGTH_END_INDEX + 1, LENGTH_END_INDEX + 1 + len));
+        String receivedHammingCode = lengthDataFCS.substring(LENGTH_END_INDEX + 1 + len);
+        String controlBits = hamminCodeOfReceivedData.substring(0, hamminCodeOfReceivedData.length() - 1);
+        String receivedControlBits = receivedHammingCode.substring(0, receivedHammingCode.length() - 1);
+        if (hamminCodeOfReceivedData.charAt(hamminCodeOfReceivedData.length()) == receivedHammingCode.charAt(receivedHammingCode.length())) {
+            if (!controlBits.equals(receivedControlBits)) {
+                return 2;
+            } else {
+                return 0;
+            }
+        } else {
+            return 1;
+//            StringUtils.indexOfDifference(controlBits,receivedControlBits)
+            //различные значения по порядку 0111 -- 1011 то есть индекс 0 и 1 и тд.....
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
+        System.out.println(generateRandomError("1111111111111"));
         System.out.println(getErrorBitPosition(1, List.of(0)));
     }
 }
-/*
-package by.lab1.service;
 
-import static java.lang.Math.pow;
-
-public class HammingService {
-    static String setHammingCode(String data)
-    {
-        int len = data.length();
-        int r = 1;
-        while((int)pow(2, r) <= len) {
-            r++;
-        }
-        String fcs = "";
-        for(int st = 1; st < (int)pow(2, r); st *= 2) {
-            int cb = 0;
-            for(int i = st - 1; i < len; i += st) {
-                int j = 0;
-                while(j < st && i < len) {
-                    //todo
-                    cb ^= Integer.parseInt(data.substring(i, i+1));
-                    j++;
-                    i++;
-                }
-            }
-//todo
-            fcs += String.valueOf(cb);
-        }
-        int cb = 0;
-        for(int i = 0; i < data.length(); i++) {
-            //todo
-            cb ^= Integer.parseInt(data.substring(i, i+1));
-        }
-        //todo
-        fcs += String.valueOf(cb);
-        return fcs;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(setHammingCode("1101"));
-    }
-}
-
- */
