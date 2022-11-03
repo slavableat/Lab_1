@@ -1,6 +1,8 @@
 package by.lab1.service;
 
 
+import org.apache.commons.lang3.StringUtils;
+
 public class PacketMaker {
     public final static String FLAG = "01100010";
     private final static String DESTINATION_ADRESS = "0000";
@@ -34,45 +36,30 @@ public class PacketMaker {
     }
 
     public static String getDataFromPacketForOutput(String packet) {
-        String bitStuffedData = packet.substring(FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length() + LENGTH_OF_DATA_LENGTH_FIELD, packet.length() - FCS_ZERO.length());
-        if (bitStuffedData.contains(FLAG.substring(0, FLAG.length() - 1))) {//без последнего реверсного бита
-            var debitStuffedData = new BitStuffer(FLAG).debitStaff(bitStuffedData);
+        var startIndexOfData = FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length() + LENGTH_OF_DATA_LENGTH_FIELD;
+        String bitStuffedOrNotBitStuffedData = packet.substring(startIndexOfData, packet.length() - FCS_ZERO.length());
+        if (bitStuffedOrNotBitStuffedData.contains(FLAG.substring(0, FLAG.length() - 1))) {//без последнего реверсного бита
+            var debitStuffedData = new BitStuffer(FLAG).debitStaff(bitStuffedOrNotBitStuffedData);
             return debitStuffedData.substring(0, debitStuffedData.length() - 1);
         } else {
-            int errorCount = HammingService.getErrorCounts(packet.substring(FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length()));
-            if (errorCount == 0) {
-                Integer len = Integer.valueOf(packet.substring(FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length(), LENGTH_OF_DATA_LENGTH_FIELD), 2);
-                return packet.substring(FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length() + len);
-            } else if (errorCount == 1) {
-                ///исправить ошибки
+            var startIndexOfLengthDataFCS = FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length();
+            int errorCount = HammingService.getErrorCounts(packet.substring(startIndexOfLengthDataFCS));
+            if (errorCount == 0 || errorCount == 2) {
+                Integer len = Integer.valueOf(packet.substring(startIndexOfLengthDataFCS, startIndexOfLengthDataFCS + LENGTH_OF_DATA_LENGTH_FIELD), 2);
+                return packet.substring(startIndexOfData, startIndexOfData + len);
+            } else if (errorCount == 1)
+                //todo найти разницу между конрольными битами без бита паритета и передать их массивом в метод getErrorBitPosition(...)
                 return null;
-            } else if (errorCount == 2) {
-                ///вернуть как есть
-                return null;
-            }
-            return null;
         }
+        return null;
     }
 
-    public static String getDataFromPacketForLogger(String packet) {
-        String bitStuffedData = packet.substring(FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length() + LENGTH_OF_DATA_LENGTH_FIELD, packet.length() - FCS_ZERO.length());
-        if (bitStuffedData.contains(FLAG.substring(0, FLAG.length() - 1))) {//без последнего реверсного бита
-            var debitStuffedData = new BitStuffer(FLAG).debitStaff(bitStuffedData);
-            return debitStuffedData.substring(0, debitStuffedData.length() - 1);
-        } else {
-            int errorCount = HammingService.getErrorCounts(packet.substring(FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length()));
-            if (errorCount == 0) {
-                Integer len = Integer.valueOf(packet.substring(FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length(), LENGTH_OF_DATA_LENGTH_FIELD), 2);
-                return packet.substring(FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length() + len);
-            } else if (errorCount == 1) {
-                /// показать где ошибки и сказать сколько
-                return null;
-            } else if (errorCount == 2) {
-                /// сказать что две ошибки
-                return null;
-            }
-            return null;
-        }
+
+    //    public static String getPacketForLogger(String packet) {
+//
+//    }
+    public static void main(String[] args) {
+//        System.out.println(getDataFromPacketForOutput("0110001000000000010011110010"));
+        System.out.println(StringUtils.indexOfDifference("1111", "0111"));
     }
 }
-
