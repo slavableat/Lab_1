@@ -48,19 +48,19 @@ public class ReadEvent implements SerialPortEventListener {
                         if (outputData.lastIndexOf(PacketMaker.FLAG) != 0) {
                             var firstPAcket = outputData.substring(0, outputData.substring(8).indexOf(PacketMaker.FLAG) + PacketMaker.FLAG.length());
                             logger.appendText(firstPAcket.replaceAll(flagIntoPacketAfterBitStuffing,markedFlagIntoPacketAfterBitStuffing ) + CARRY_OVER);
-                            var outputData1 = PacketMaker.getDataFromPacket(firstPAcket);
+                            var outputData1 = PacketMaker.getDataFromPacketForOutput(firstPAcket);
                             dataToOutput.append(outputData1);
                             outputData = outputData.substring(firstPAcket.length());
                         } else {
                             logger.appendText(outputData.replaceAll(flagIntoPacketAfterBitStuffing,markedFlagIntoPacketAfterBitStuffing ) + CARRY_OVER);
-                            outputData = PacketMaker.getDataFromPacket(outputData);
+                            outputData = PacketMaker.getDataFromPacketForOutput(outputData);
                             dataToOutput.append(outputData);
                             break;
                         }
                     }
                 } else {
                     logger.appendText(outputData.replaceAll(flagIntoPacketAfterBitStuffing,markedFlagIntoPacketAfterBitStuffing ) + CARRY_OVER);
-                    outputData = PacketMaker.getDataFromPacket(outputData);
+                    outputData = PacketMaker.getDataFromPacketForOutput(outputData);
                     dataToOutput.append(outputData);
                 }
                 output.appendText(dataToOutput + CARRY_OVER);
