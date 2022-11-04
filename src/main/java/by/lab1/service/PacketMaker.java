@@ -1,7 +1,10 @@
 package by.lab1.service;
 
 
-import org.apache.commons.lang3.StringUtils;
+import by.lab1.utils.PacketUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PacketMaker {
     public final static String FLAG = "01100010";
@@ -9,13 +12,12 @@ public class PacketMaker {
     private final static String SOURCE_ADDRESS = "0000";
 
     private final static String FCS_ZERO = "0";
-    public static final int LENGTH_OF_DATA_LENGTH_FIELD = 4;
 
     public static String makePacket(String data) {
         return FLAG +
                 DESTINATION_ADRESS +
                 SOURCE_ADDRESS +
-                getBynaryStringOfLength(data) +
+                PacketUtils.getBinaryStringOfParameterLength(data) +
                 getBitstuffedDataWithZEROfcsORDataWithHammingCodeFCS(data);
     }
 
@@ -27,39 +29,57 @@ public class PacketMaker {
         }
     }
 
-    private static String getBynaryStringOfLength(String data) {
-        var lengthOfData = Integer.toBinaryString(data.length());
-        while (lengthOfData.length() < LENGTH_OF_DATA_LENGTH_FIELD) {
-            lengthOfData = "0".concat(lengthOfData);
-        }
-        return lengthOfData;
-    }
 
     public static String getDataFromPacketForOutput(String packet) {
-        var startIndexOfData = FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length() + LENGTH_OF_DATA_LENGTH_FIELD;
-        String bitStuffedOrNotBitStuffedData = packet.substring(startIndexOfData, packet.length() - FCS_ZERO.length());
+        String bitStuffedOrNotBitStuffedData = PacketUtils.getDataBitsWhereFCSisZeroFromPacket(packet);
         if (bitStuffedOrNotBitStuffedData.contains(FLAG.substring(0, FLAG.length() - 1))) {//без последнего реверсного бита
             var debitStuffedData = new BitStuffer(FLAG).debitStaff(bitStuffedOrNotBitStuffedData);
             return debitStuffedData.substring(0, debitStuffedData.length() - 1);
         } else {
-            var startIndexOfLengthDataFCS = FLAG.length() + DESTINATION_ADRESS.length() + SOURCE_ADDRESS.length();
-            int errorCount = HammingService.getErrorCounts(packet.substring(startIndexOfLengthDataFCS));
-            if (errorCount == 0 || errorCount == 2) {
-                Integer len = Integer.valueOf(packet.substring(startIndexOfLengthDataFCS, startIndexOfLengthDataFCS + LENGTH_OF_DATA_LENGTH_FIELD), 2);
-                return packet.substring(startIndexOfData, startIndexOfData + len);
-            } else if (errorCount == 1)
+            int errorCount = PacketUtils.getErrorCountsIntoLengthDataFCS(PacketUtils.getLengthDataFCSFromPacket(packet));
+            if (errorCount == 1) {
                 //todo найти разницу между конрольными битами без бита паритета и передать их массивом в метод getErrorBitPosition(...)
-                return null;
+                var rightHammingCode = PacketUtils.getHammingCodeFromHammingCodeAndParity(HammingService.setHammingCodeWithParityBit(PacketUtils.getDataBitsFromPacket(packet)));
+                var receivedHammingCode = PacketUtils.getHammingCodeFromPacket(packet);
+                Integer right = Integer.parseInt(rightHammingCode, 2);
+                Integer received = Integer.parseInt(receivedHammingCode, 2);
+                String result = Integer.toBinaryString(right ^ received);
+                result = PacketUtils.leftConcatWithZeroes(result, rightHammingCode.length());
+                List<Integer> indexes = new ArrayList<>();
+                for (int i = 0; i < result.length(); i++) {
+                    if (result.charAt(i) == '1') indexes.add(i);
+                }
+                var data = PacketUtils.getDataBitsFromPacket(packet);
+                var indexOfError = HammingService.getErrorBitPosition(PacketUtils.getLengthFromPacket(packet), indexes);
+                char[] dataChars = data.toCharArray();
+//                System.out.println(dataChars);
+//                System.out.println(indexOfError + " index");
+                dataChars[indexOfError] = dataChars[indexOfError] == '1' ? '0' : '1';
+                return String.valueOf(dataChars);
+            } else if (errorCount == 2) {
+//                System.out.println("two");
+            } else if (errorCount == 0) {
+//                System.out.println("zero");
+            }
+            return PacketUtils.getDataBitsFromPacket(packet);
         }
-        return null;
     }
 
-
+    //TODO информация для логгера
     //    public static String getPacketForLogger(String packet) {
 //
 //    }
     public static void main(String[] args) {
-//        System.out.println(getDataFromPacketForOutput("0110001000000000010011110010"));
-        System.out.println(StringUtils.indexOfDifference("1111", "0111"));
+//        System.out.println(getLengthDataFCSFromPacket("01100010-0000-0000-1111-010100101010001-00110"));
+        System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
+        System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
+        System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
+        System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
+        System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
+        System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
+        System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
+        System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
+        System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
+        System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
     }
 }
