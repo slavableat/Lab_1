@@ -3,9 +3,6 @@ package by.lab1.service;
 
 import by.lab1.utils.PacketUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PacketMaker {
     public final static String FLAG = "01100010";
     private final static String DESTINATION_ADRESS = "0000";
@@ -38,24 +35,7 @@ public class PacketMaker {
         } else {
             int errorCount = PacketUtils.getErrorCountsIntoLengthDataFCS(PacketUtils.getLengthDataFCSFromPacket(packet));
             if (errorCount == 1) {
-                //todo найти разницу между конрольными битами без бита паритета и передать их массивом в метод getErrorBitPosition(...)
-                var rightHammingCode = PacketUtils.getHammingCodeFromHammingCodeAndParity(HammingService.setHammingCodeWithParityBit(PacketUtils.getDataBitsFromPacket(packet)));
-                var receivedHammingCode = PacketUtils.getHammingCodeFromPacket(packet);
-                Integer right = Integer.parseInt(rightHammingCode, 2);
-                Integer received = Integer.parseInt(receivedHammingCode, 2);
-                String result = Integer.toBinaryString(right ^ received);
-                result = PacketUtils.leftConcatWithZeroes(result, rightHammingCode.length());
-                List<Integer> indexes = new ArrayList<>();
-                for (int i = 0; i < result.length(); i++) {
-                    if (result.charAt(i) == '1') indexes.add(i);
-                }
-                var data = PacketUtils.getDataBitsFromPacket(packet);
-                var indexOfError = HammingService.getErrorBitPosition(PacketUtils.getLengthFromPacket(packet), indexes);
-                char[] dataChars = data.toCharArray();
-//                System.out.println(dataChars);
-//                System.out.println(indexOfError + " index");
-                dataChars[indexOfError] = dataChars[indexOfError] == '1' ? '0' : '1';
-                return String.valueOf(dataChars);
+                return PacketUtils.fixSingleErrorAndGetDataBits(packet);
             } else if (errorCount == 2) {
 //                System.out.println("two");
             } else if (errorCount == 0) {
@@ -64,6 +44,8 @@ public class PacketMaker {
             return PacketUtils.getDataBitsFromPacket(packet);
         }
     }
+
+
 
     //TODO информация для логгера
     //    public static String getPacketForLogger(String packet) {
@@ -80,6 +62,6 @@ public class PacketMaker {
         System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
         System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
         System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
-        System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));
+        System.out.println(getDataFromPacketForOutput("01100010000000001111" + "0110001101010001" + "0"));
     }
 }

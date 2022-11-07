@@ -2,6 +2,9 @@ package by.lab1.utils;
 
 import by.lab1.service.HammingService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PacketUtils {
 
     public static final int FLAG_LENGTH = 8;
@@ -109,5 +112,22 @@ public class PacketUtils {
 
     public static String getHammingCodeFromPacket(String packet) {
         return getHammingCodeFromLengthDataFCS(getLengthDataFCSFromPacket(packet));
+    }
+    public static String fixSingleErrorAndGetDataBits(String packet) {
+        var rightHammingCode = PacketUtils.getHammingCodeFromHammingCodeAndParity(HammingService.setHammingCodeWithParityBit(PacketUtils.getDataBitsFromPacket(packet)));
+        var receivedHammingCode = PacketUtils.getHammingCodeFromPacket(packet);
+        Integer right = Integer.parseInt(rightHammingCode, 2);
+        Integer received = Integer.parseInt(receivedHammingCode, 2);
+        String result = Integer.toBinaryString(right ^ received);
+        result = PacketUtils.leftConcatWithZeroes(result, rightHammingCode.length());
+        List<Integer> indexes = new ArrayList<>();
+        for (int i = 0; i < result.length(); i++) {
+            if (result.charAt(i) == '1') indexes.add(i);
+        }
+        var data = PacketUtils.getDataBitsFromPacket(packet);
+        var indexOfError = HammingService.getErrorBitPosition(PacketUtils.getLengthFromPacket(packet), indexes);
+        char[] dataChars = data.toCharArray();
+        dataChars[indexOfError] = dataChars[indexOfError] == '1' ? '0' : '1';
+        return String.valueOf(dataChars);
     }
 }
