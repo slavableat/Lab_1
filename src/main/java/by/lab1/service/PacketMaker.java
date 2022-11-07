@@ -46,11 +46,30 @@ public class PacketMaker {
     }
 
 
-
     //TODO информация для логгера
-    //    public static String getPacketForLogger(String packet) {
-//
-//    }
+    public static String getPacketForLogger(String packet) {
+        String bitStuffedOrNotBitStuffedData = PacketUtils.getDataBitsWhereFCSisZeroFromPacket(packet);
+        if (bitStuffedOrNotBitStuffedData.contains(FLAG.substring(0, FLAG.length() - 1))) {//без последнего реверсного бита
+
+            var flagIntoPacketAfterBitStuffing = PacketUtils.getFlagIntoPacketAfterBitStuffing();
+            var markedFlagIntoPacketAfterBitStuffing = flagIntoPacketAfterBitStuffing.substring(0, flagIntoPacketAfterBitStuffing.length() - 1)
+                    + "[" + flagIntoPacketAfterBitStuffing.charAt(flagIntoPacketAfterBitStuffing.length() - 1) + "]";
+
+            return packet.replaceAll(flagIntoPacketAfterBitStuffing, markedFlagIntoPacketAfterBitStuffing);
+
+        } else {
+            int errorCount = PacketUtils.getErrorCountsIntoLengthDataFCS(PacketUtils.getLengthDataFCSFromPacket(packet));
+            if (errorCount == 1) {
+                return PacketUtils.fixSingleErrorAndGetDataBits(packet);
+            } else if (errorCount == 2) {
+//                System.out.println("two");
+            } else if (errorCount == 0) {
+//                System.out.println("zero");
+            }
+            return PacketUtils.getDataBitsFromPacket(packet);
+        }
+    }
+
     public static void main(String[] args) {
 //        System.out.println(getLengthDataFCSFromPacket("01100010-0000-0000-1111-010100101010001-00110"));
         System.out.println(getDataFromPacketForOutput("01100010000000001111" + PacketUtils.generateRandomError("010100101010001") + "00110"));

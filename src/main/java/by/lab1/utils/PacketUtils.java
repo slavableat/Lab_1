@@ -1,6 +1,7 @@
 package by.lab1.utils;
 
 import by.lab1.service.HammingService;
+import by.lab1.service.PacketMaker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,6 +114,7 @@ public class PacketUtils {
     public static String getHammingCodeFromPacket(String packet) {
         return getHammingCodeFromLengthDataFCS(getLengthDataFCSFromPacket(packet));
     }
+
     public static String fixSingleErrorAndGetDataBits(String packet) {
         var rightHammingCode = PacketUtils.getHammingCodeFromHammingCodeAndParity(HammingService.setHammingCodeWithParityBit(PacketUtils.getDataBitsFromPacket(packet)));
         var receivedHammingCode = PacketUtils.getHammingCodeFromPacket(packet);
@@ -130,4 +132,16 @@ public class PacketUtils {
         dataChars[indexOfError] = dataChars[indexOfError] == '1' ? '0' : '1';
         return String.valueOf(dataChars);
     }
+
+    public static String getFlagIntoPacketAfterBitStuffing() {
+        var flag = PacketMaker.FLAG;
+        var lastSymbol = flag.charAt(flag.length() - 1);
+        char reverseLastSymbol;
+        //ToDo IDEA say that this condition is always false
+        if (lastSymbol == '1') reverseLastSymbol = '0';
+
+        else reverseLastSymbol = '1';
+        return flag.substring(0, flag.length() - 1) + (reverseLastSymbol);
+    }
+
 }
