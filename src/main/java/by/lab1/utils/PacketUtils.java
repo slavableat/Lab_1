@@ -154,6 +154,6 @@ public class PacketUtils {
 
     public static String markFCSfield(String packet) {
         int lengthOfFCS = HammingService.setHammingCodeWithParityBit(PacketUtils.getDataBitsFromPacket(packet)).length();
-        return packet.substring(0, packet.length() - lengthOfFCS) + "(" + packet.substring(packet.length() - lengthOfFCS - 1) + ")";
+        return packet.substring(0, packet.length() - lengthOfFCS) + "(" + packet.substring(packet.length() - lengthOfFCS) + ")";
     }
 }
