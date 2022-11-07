@@ -12,7 +12,6 @@ import java.util.Arrays;
 public class SendEvent {
     private final TextArea input;
     private final TextArea debug;
-//    private final PacketMaker packetMaker = new PacketMaker();
 
     public SendEvent(TextArea input, TextArea debug, PortAndHisTextArea port) {
         this.input = input;
@@ -60,11 +59,9 @@ public class SendEvent {
         while (temp.length() / 15 != 0) {
             var packet = PacketMaker.makePacket(temp.substring(0, 15));
             temp = temp.substring(15);
-//            port.getSerialPort().writeBytes(packet.getBytes(StandardCharsets.UTF_8));
             packets.append(packet);
         }
         if (!temp.isEmpty()) {
-//            port.getSerialPort().writeBytes(PacketMaker.makePacket(temp).getBytes(StandardCharsets.UTF_8));
             packets.append(PacketMaker.makePacket(temp));
         }
         return packets.toString();

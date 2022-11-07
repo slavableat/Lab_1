@@ -144,4 +144,16 @@ public class PacketUtils {
         return flag.substring(0, flag.length() - 1) + (reverseLastSymbol);
     }
 
+    public static String markFlagCombinations(String packet) {
+        var flagIntoPacketAfterBitStuffing = PacketUtils.getFlagIntoPacketAfterBitStuffing();
+        var markedFlagIntoPacketAfterBitStuffing = flagIntoPacketAfterBitStuffing.substring(0, flagIntoPacketAfterBitStuffing.length() - 1)
+                + "[" + flagIntoPacketAfterBitStuffing.charAt(flagIntoPacketAfterBitStuffing.length() - 1) + "]";
+
+        return packet.replaceAll(flagIntoPacketAfterBitStuffing, markedFlagIntoPacketAfterBitStuffing);
+    }
+
+    public static String markFCSfield(String packet) {
+        int lengthOfFCS = HammingService.setHammingCodeWithParityBit(PacketUtils.getDataBitsFromPacket(packet)).length();
+        return packet.substring(0, packet.length() - lengthOfFCS) + "(" + packet.substring(packet.length() - lengthOfFCS - 1) + ")";
+    }
 }
