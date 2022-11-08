@@ -47,13 +47,6 @@ public class PacketMaker {
 
 
     public static String getPacketForLogger(String packet) {
-//        String bitStuffedOrNotBitStuffedData = PacketUtils.getDataBitsWhereFCSisZeroFromPacket(packet);
-//        String outputForLogger;
-//        if (bitStuffedOrNotBitStuffedData.contains(FLAG.substring(0, FLAG.length() - 1))) {//без последнего реверсного бита
-//            outputForLogger = PacketUtils.markFlagCombinations(packet);
-//        } else {
-//            outputForLogger = PacketUtils.markFCSfield(packet);
-//        }
         return PacketUtils.markFCSfield(packet);
     }
 }
