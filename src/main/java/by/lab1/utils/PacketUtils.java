@@ -153,7 +153,17 @@ public class PacketUtils {
     }
 
     public static String markFCSfield(String packet) {
-        int lengthOfFCS = HammingService.setHammingCodeWithParityBit(PacketUtils.getDataBitsFromPacket(packet)).length();
+        int lengthOfFCS = calculateFCSLength(packet);
         return packet.substring(0, packet.length() - lengthOfFCS) + "(" + packet.substring(packet.length() - lengthOfFCS) + ")";
+    }
+
+    private static int calculateFCSLength(String packet) {
+        int lengthOfFCS;
+        if (packet.substring(FLAG_LENGTH).contains(PacketMaker.FLAG.substring(0, PacketMaker.FLAG.length() - 1))) {
+            lengthOfFCS = 1;
+        } else {
+            lengthOfFCS = HammingService.setHammingCodeWithParityBit(PacketUtils.getDataBitsFromPacket(packet)).length();
+        }
+        return lengthOfFCS;
     }
 }
