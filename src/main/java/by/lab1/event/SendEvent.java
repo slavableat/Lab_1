@@ -1,15 +1,20 @@
 package by.lab1.event;
 
+import by.lab1.service.CSMACDservice;
 import by.lab1.service.PacketMaker;
 import by.lab1.model.PortAndHisTextArea;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import javafx.scene.control.TextArea;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 
 public class SendEvent {
+    private static final int MAX_NUMBER_OF_ATTEMPTS = 10;
     private final TextArea input;
     private final TextArea debug;
 
@@ -21,28 +26,64 @@ public class SendEvent {
 
     private final PortAndHisTextArea port;
 
-    private static final String CARRY_OVER = "\n";
+    public void enterClickEvent() {
 
-
-    public void mouseClickedEvent() {
-        try {
-            if (isPortAvailable()) {
-                String text = input.getText();
-                if (text.length() > 1) {
-                    text = text.substring(0, text.length() - 1);
-                    if (text.length() / 15 >= 1) {
-                        sendTextToPort(makePackets(text));
-                    } else {
-                        sendTextToPort(PacketMaker.makePacket(text));
-                    }
-                }
+        if (isPortAvailable()) {
+            input.setEditable(false);
+            if (input.getLength() == 1) {
                 input.clear();
-            } else {
-                debug.appendText("Unable to send data to port!" + CARRY_OVER);
+                return;
             }
-        } catch (SerialPortException e) {
-            e.printStackTrace();
+            new Thread(() -> {
+                try {
+                    List<String> dataToSend = Lists.newArrayList(Splitter.fixedLength(15).split(input.getText()));//with carry over(((
+                    input.clear();
+
+                    for (String temp : dataToSend) {
+                        //TODO почекать кол-во попоыток
+                        int attemptsCounter;
+                        if (isPortAvailable()) {
+                            for (Character symbol : temp.toCharArray()) {
+                                attemptsCounter = 1;
+                                if (symbol == '\n') {
+                                    sendTextToPort(String.valueOf(symbol));
+                                    break;
+                                }
+                                while (attemptsCounter <= MAX_NUMBER_OF_ATTEMPTS) {
+                                    while (CSMACDservice.isChannelBusy()) {
+                                    }
+                                    sendTextToPort(String.valueOf(symbol));
+                                    CSMACDservice.sleepDuringCollisionWindow();
+                                    if (CSMACDservice.isCollisionOccured()) {
+                                        simulateCollision();
+                                        attemptsCounter++;
+                                        CSMACDservice.makeCollisionDelay(attemptsCounter);
+                                        debug.appendText("c");
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                debug.appendText("\n");
+
+                            }
+                        } else debug.appendText("Unable to sent information!");
+                    }
+                } catch (SerialPortException e) {
+                    e.printStackTrace();
+                } finally {
+                    input.setEditable(true);
+                }
+            }).start();
         }
+    }
+
+    private void simulateCollision() throws SerialPortException {
+        sendTextToPort((((int) (Math.random() * 2)) == 0) ? "1" : "0"); //fake collision
+    }
+
+    private static String excludeCarryOver(String text) {
+        text = text.substring(0, text.length() - 1);
+        return text;
     }
 
     private void sendTextToPort(String text) throws SerialPortException {

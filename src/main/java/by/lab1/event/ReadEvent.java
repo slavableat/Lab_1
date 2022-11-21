@@ -1,7 +1,6 @@
 package by.lab1.event;
 
 import by.lab1.model.PortAndHisTextArea;
-import by.lab1.service.PacketMaker;
 import javafx.scene.control.TextArea;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
@@ -29,21 +28,21 @@ public class ReadEvent implements SerialPortEventListener {
                 byte[] dataByteFormat = port.getSerialPort().readBytes(serialPortEvent.getEventValue());
                 String packets = new String(dataByteFormat, StandardCharsets.UTF_8);
 
-                StringBuilder dataToOutput = new StringBuilder();
-
-                while (!packets.isEmpty()) {
-                    if (packets.lastIndexOf(PacketMaker.FLAG) != 0) {
-                        var firstPAcket = packets.substring(0, packets.substring(8).indexOf(PacketMaker.FLAG) + PacketMaker.FLAG.length());
-                        logger.appendText(PacketMaker.getPacketForLogger(firstPAcket) + CARRY_OVER);
-                        dataToOutput.append(PacketMaker.getDataFromPacketForOutput(firstPAcket));
-                        packets = packets.substring(firstPAcket.length());
-                    } else {
-                        logger.appendText(PacketMaker.getPacketForLogger(packets) + CARRY_OVER);
-                        dataToOutput.append(PacketMaker.getDataFromPacketForOutput(packets));
-                        break;
-                    }
-                }
-                output.appendText(dataToOutput + CARRY_OVER);
+//                StringBuilder dataToOutput = new StringBuilder();
+//
+//                while (!packets.isEmpty()) {
+//                    if (packets.lastIndexOf(PacketMaker.FLAG) != 0) {
+//                        var firstPAcket = packets.substring(0, packets.substring(8).indexOf(PacketMaker.FLAG) + PacketMaker.FLAG.length());
+//                        logger.appendText(PacketMaker.getPacketForLogger(firstPAcket) + CARRY_OVER);
+//                        dataToOutput.append(PacketMaker.getDataFromPacketForOutput(firstPAcket));
+//                        packets = packets.substring(firstPAcket.length());
+//                    } else {
+//                        logger.appendText(PacketMaker.getPacketForLogger(packets) + CARRY_OVER);
+//                        dataToOutput.append(PacketMaker.getDataFromPacketForOutput(packets));
+//                        break;
+//                    }
+//                }
+                output.appendText(packets);
             } catch (SerialPortException e) {
                 e.printStackTrace();
             }

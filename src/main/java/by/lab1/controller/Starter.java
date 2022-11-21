@@ -63,7 +63,7 @@ public class Starter {
 
             input.setOnKeyPressed(keyEvent -> {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
-                    new SendEvent(input, logger, writer).mouseClickedEvent();
+                    new SendEvent(input, logger, writer).enterClickEvent();
                 }
             });
 
