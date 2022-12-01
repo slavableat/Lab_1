@@ -27,8 +27,6 @@ public class SendEvent {
     private final PortAndHisTextArea port;
 
     public void enterClickEvent() {
-
-        if (isPortAvailable()) {
             input.setEditable(false);
             if (input.getLength() == 1) {
                 input.clear();
@@ -36,26 +34,24 @@ public class SendEvent {
             }
             new Thread(() -> {
                 try {
-                    List<String> dataToSend = Lists.newArrayList(Splitter.fixedLength(15).split(input.getText()));//with carry over(((
+                    String dataToSend = input.getText();//with carry over(((
                     input.clear();
 
-                    for (String temp : dataToSend) {
+
                         //TODO почекать кол-во попоыток
                         int attemptsCounter;
                         if (isPortAvailable()) {
-                            for (Character symbol : temp.toCharArray()) {
+                            int counter = 0;
+                            for (Character symbol : dataToSend.toCharArray()) {
                                 attemptsCounter = 1;
                                 if (symbol == '\n') {
-                                    sendTextToPort(String.valueOf(symbol));
                                     break;
                                 }
                                 while (attemptsCounter <= MAX_NUMBER_OF_ATTEMPTS) {
                                     while (CSMACDservice.isChannelBusy()) {
                                     }
-                                    sendTextToPort(String.valueOf(symbol));
                                     CSMACDservice.sleepDuringCollisionWindow();
                                     if (CSMACDservice.isCollisionOccured()) {
-                                        simulateCollision();
                                         attemptsCounter++;
                                         CSMACDservice.makeCollisionDelay(attemptsCounter);
                                         debug.appendText("c");
@@ -63,18 +59,17 @@ public class SendEvent {
                                         break;
                                     }
                                 }
+                                sendTextToPort(String.valueOf(symbol));
                                 debug.appendText("\n");
 
                             }
                         } else debug.appendText("Unable to sent information!");
-                    }
                 } catch (SerialPortException e) {
                     e.printStackTrace();
                 } finally {
                     input.setEditable(true);
                 }
             }).start();
-        }
     }
 
     private void simulateCollision() throws SerialPortException {
